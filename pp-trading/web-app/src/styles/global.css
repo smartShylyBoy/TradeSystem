@@ -1,0 +1,185 @@
+/*
+ * 深色主题全局样式。
+ * CSS 变量统一管理配色，方便后续主题切换。
+ *
+ * 配色说明：
+ *   涨/阳线: 红色 #ef4444（中国习惯：红涨绿跌）
+ *   跌/阴线: 绿色 #22c55e
+ */
+:root {
+  --bg-page: #0d1117;       /* 页面背景 */
+  --bg-card: #161b22;       /* 卡片/面板背景 */
+  --border: #30363d;        /* 边框 */
+  --text-primary: #e6edf3;  /* 主文字 */
+  --text-secondary: #8b949e;/* 次文字 */
+  --up: #ef4444;            /* 涨/阳线 */
+  --down: #22c55e;          /* 跌/阴线 */
+  --blue: #2563eb;          /* 按钮蓝 */
+  --orange: #f97316;        /* 按钮橙 */
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ========== 导航栏 ========== */
+.navbar {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  color: #fff !important;
+  font-size: 1.1rem;
+}
+
+.nav-link {
+  color: var(--text-secondary) !important;
+  font-size: 0.9rem;
+}
+
+.nav-link.active {
+  color: var(--text-primary) !important;
+}
+
+.nav-link.disabled {
+  color: var(--text-secondary) !important;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========== 搜索栏 ========== */
+.search-bar {
+  padding: 12px 16px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.search-bar .form-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.search-bar .form-control,
+.search-bar .form-select {
+  background-color: var(--bg-page);
+  border-color: var(--border);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.search-bar .form-control:focus,
+.search-bar .form-select:focus {
+  background-color: var(--bg-page);
+  border-color: var(--blue);
+  color: var(--text-primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+.search-bar .form-control::placeholder {
+  color: var(--text-secondary);
+}
+
+/* 日期选择器日历图标颜色 */
+.search-bar input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+
+/* ========== 股票标签 ========== */
+.stock-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.stock-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+
+.stock-tab:hover {
+  border-color: var(--text-secondary);
+}
+
+.stock-tab.active {
+  background-color: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.stock-tab-close {
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+
+.stock-tab-close:hover {
+  opacity: 1;
+}
+
+/* ========== K 线图 ========== */
+.kline-chart {
+  width: 100%;
+  height: 600px;
+  margin-top: 8px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* ========== Alert ========== */
+.alert-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--up);
+}
+
+/* ========== 按钮 ========== */
+.btn-primary {
+  background-color: var(--blue);
+  border-color: var(--blue);
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* ========== Bootstrap 深色覆盖 ========== */
+.form-control:focus {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+}
+
+/* ========== 响应式 ========== */
+@media (max-width: 768px) {
+  .kline-chart {
+    height: 400px;
+  }
+
+  .search-bar {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .kline-chart {
+    height: 320px;
+  }
+}

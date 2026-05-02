@@ -9,7 +9,15 @@
       "Bash(bash scripts/start-all.sh)",
       "Bash(curl -s \"https://financialmodelingprep.com/api/v3/historical-price-full/AAPL?apikey=ZLZ4M3Ki0WHi6IDjzKTwCpRdN1gI92nd&from=2024-01-01&to=2024-01-10\")",
       "Bash(curl -s \"https://financialmodelingprep.com/stable/historical-price-eod/full?symbol=TSLA&apikey=ZLZ4M3Ki0WHi6IDjzKTwCpRdN1gI92nd&from=2024-01-01&to=2024-01-10\")",
-      "Bash(python -m json.tool)"
+      "Bash(python -m json.tool)",
+      "Bash(where.exe mvn *)",
+      "Bash(cmd.exe *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)"
     ]
   }
 }
