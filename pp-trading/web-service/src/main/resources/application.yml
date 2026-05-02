@@ -1,0 +1,10 @@
+server:
+  port: 8181
+
+spring:
+  application:
+    name: web-service
+
+service:
+  market-data:
+    url: http://localhost:8182
