@@ -4,7 +4,10 @@ import ai.pp.trading.marketdata.application.exception.RateLimitExceededException
 import ai.pp.trading.marketdata.domain.model.Kline;
 import ai.pp.trading.marketdata.domain.port.MarketDataProvider;
 import ai.pp.trading.marketdata.infrastructure.external.dto.FmpHistoricalResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 @Component
 public class FmpMarketDataProvider implements MarketDataProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(FmpMarketDataProvider.class);
+
     /** FMP API WebClient */
     private final WebClient fmpWebClient;
     /** FMP API密钥 */
@@ -44,29 +49,37 @@ public class FmpMarketDataProvider implements MarketDataProvider {
     public List<Kline> getKlines(String symbol, String market, String period, LocalDate startDate, LocalDate endDate) {
         // 目前仅支持美股市场
         if (!"us".equalsIgnoreCase(market)) {
+            log.warn("不支持的市场类型: symbol={}, market={}", symbol, market);
             return new ArrayList<>();
         }
 
+        log.info("FMP请求开始: symbol={}, market={}, period={}, startDate={}, endDate={}", symbol, market, period, startDate, endDate);
+
         try {
-            // 调用FMP历史价格API
-            FmpHistoricalResponse response = fmpWebClient.get()
+            // 调用FMP历史价格API (stable/historical-price-eod/full)
+            // 该端点返回扁平数组 [{symbol, date, open, high, low, close, volume, ...}, ...]
+            List<FmpHistoricalResponse.FmpDailyPrice> priceList = fmpWebClient.get()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/historical-price-full/{symbol}")
+                            .path("/historical-price-eod/full")
+                            .queryParam("symbol", symbol)
                             .queryParam("apikey", apiKey)
                             .queryParam("from", startDate)
                             .queryParam("to", endDate)
-                            .build(symbol))
+                            .build())
                     .retrieve()
                     .onStatus(HttpStatus::is4xxClientError, this::mapClientError)
-                    .bodyToMono(FmpHistoricalResponse.class)
+                    .bodyToMono(new ParameterizedTypeReference<List<FmpHistoricalResponse.FmpDailyPrice>>() {})
                     .block();
 
-            if (response == null || response.getHistorical() == null || response.getHistorical().isEmpty()) {
+            if (priceList == null || priceList.isEmpty()) {
+                log.warn("FMP返回空数据: symbol={}, period={}, dateRange=[{}, {}]", symbol, period, startDate, endDate);
                 return new ArrayList<>();
             }
 
+            log.info("FMP响应成功: symbol={}, 原始数据条数={}", symbol, priceList.size());
+
             // 将API响应转换为领域模型，按日期排序
-            List<Kline> dailyKlines = response.getHistorical().stream()
+            List<Kline> dailyKlines = priceList.stream()
                     .filter(item -> item.getDate() != null)
                     .map(item -> new Kline(
                             LocalDate.parse(item.getDate()),
@@ -80,19 +93,31 @@ public class FmpMarketDataProvider implements MarketDataProvider {
                     .collect(Collectors.toList());
 
             // 根据周期进行聚合
+            List<Kline> result;
             switch (period.toLowerCase(Locale.ROOT)) {
                 case "daily":
-                    return dailyKlines;
+                    result = dailyKlines;
+                    break;
                 case "weekly":
-                    return aggregateWeekly(dailyKlines);
+                    result = aggregateWeekly(dailyKlines);
+                    log.info("周K聚合完成: symbol={}, 日K条数={}, 周K条数={}", symbol, dailyKlines.size(), result.size());
+                    break;
                 case "monthly":
-                    return aggregateMonthly(dailyKlines);
+                    result = aggregateMonthly(dailyKlines);
+                    log.info("月K聚合完成: symbol={}, 日K条数={}, 月K条数={}", symbol, dailyKlines.size(), result.size());
+                    break;
                 default:
+                    log.warn("不支持的K线周期: period={}", period);
                     return new ArrayList<>();
             }
+
+            log.info("FMP请求完成: symbol={}, period={}, 返回K线条数={}", symbol, period, result.size());
+            return result;
         } catch (RateLimitExceededException ex) {
+            log.error("FMP API速率限制: symbol={}, error={}", symbol, ex.getMessage());
             throw ex;
         } catch (WebClientResponseException ex) {
+            log.error("FMP API响应异常: symbol={}, status={}, body={}", symbol, ex.getStatusCode(), ex.getResponseBodyAsString());
             // 处理429速率限制错误
             if (ex.getStatusCode().value() == 429 || containsRateLimitMessage(ex.getResponseBodyAsString())) {
                 throw new RateLimitExceededException("FMP API速率限制超出，请稍后重试。");
@@ -101,6 +126,9 @@ public class FmpMarketDataProvider implements MarketDataProvider {
             if (ex.getStatusCode().is4xxClientError()) {
                 return new ArrayList<>();
             }
+            throw ex;
+        } catch (Exception ex) {
+            log.error("FMP API调用失败: symbol={}, error={}", symbol, ex.getMessage(), ex);
             throw ex;
         }
     }

@@ -1,0 +1,22 @@
+# Runtime files (logs, PIDs)
+scripts/.runtime/
+
+# Environment variables
+.env
+
+# IDE
+.idea/
+*.iml
+
+# Maven
+target/
+*.class
+*.jar
+
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db

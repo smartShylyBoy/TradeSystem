@@ -1,5 +1,8 @@
 package ai.pp.trading.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * K线响应DTO
  * API返回的K线数据格式，包含OHLCV数据
@@ -19,7 +22,13 @@ public class KlineResponse {
     /** 成交量 */
     private final long volume;
 
-    public KlineResponse(String date, double open, double high, double low, double close, long volume) {
+    @JsonCreator
+    public KlineResponse(@JsonProperty("date") String date,
+                         @JsonProperty("open") double open,
+                         @JsonProperty("high") double high,
+                         @JsonProperty("low") double low,
+                         @JsonProperty("close") double close,
+                         @JsonProperty("volume") long volume) {
         this.date = date;
         this.open = open;
         this.high = high;

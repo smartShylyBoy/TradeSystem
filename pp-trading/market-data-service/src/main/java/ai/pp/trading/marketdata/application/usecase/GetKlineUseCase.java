@@ -80,6 +80,9 @@ public class GetKlineUseCase {
         // 将获取的数据缓存到数据库
         if (!fetchedKlines.isEmpty()) {
             klineRepository.saveAll(tableName, normalizedSymbol, normalizedMarket, fetchedKlines);
+        }else {
+            log.info("查询FMP API返回空: 从FMP API获取 symbol={}, market={}, period={}, startDate={}, endDate={}",
+                    normalizedSymbol, normalizedMarket, normalizedPeriod, startDate, endDate);
         }
 
         return toResponses(fetchedKlines);

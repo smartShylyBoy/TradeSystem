@@ -2,6 +2,9 @@ package ai.pp.trading.marketdata.presentation.controller;
 
 import ai.pp.trading.common.dto.KlineResponse;
 import ai.pp.trading.marketdata.application.usecase.GetKlineUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import java.util.List;
  * 行情数据控制器
  * 提供K线数据的REST API接口
  */
+@Tag(name = "行情数据", description = "K线数据查询接口")
 @RestController
 @RequestMapping("/api/market-data")
 public class MarketDataController {
@@ -34,13 +38,14 @@ public class MarketDataController {
      * @param endDate 结束日期，默认今天
      * @return K线数据列表
      */
+    @Operation(summary = "获取K线数据", description = "根据股票代码、市场、周期和日期范围查询K线数据，支持缓存优先策略")
     @GetMapping("/kline")
     public List<KlineResponse> getKline(
-            @RequestParam String symbol,
-            @RequestParam(defaultValue = "us") String market,
-            @RequestParam(defaultValue = "daily") String period,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @Parameter(description = "股票代码，如 AAPL、TSLA") @RequestParam String symbol,
+            @Parameter(description = "市场类型") @RequestParam(defaultValue = "us") String market,
+            @Parameter(description = "K线周期") @RequestParam(defaultValue = "daily") String period,
+            @Parameter(description = "开始日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @Parameter(description = "结束日期") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
         // 默认结束日期为今天
         LocalDate resolvedEndDate = endDate == null ? LocalDate.now() : endDate;

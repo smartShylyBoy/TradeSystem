@@ -10,7 +10,7 @@ interface Props {
 function getDefaultDates() {
   const end = new Date()
   const start = new Date()
-  start.setFullYear(start.getFullYear() - 5)
+  start.setFullYear(start.getFullYear() - 1)
   const fmt = (d: Date) => d.toISOString().slice(0, 10)
   return { startDate: fmt(start), endDate: fmt(end) }
 }

@@ -1,25 +1,39 @@
 package ai.pp.trading.marketdata.infrastructure.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
-/**
- * WebClient配置类
- * 配置用于调用FMP API的WebClient实例
- */
 @Configuration
 public class WebClientConfig {
 
-    /**
-     * 创建FMP API的WebClient Bean
-     * @param baseUrl FMP API基础地址（从配置文件读取）
-     * @param builder WebClient构建器
-     * @return 配置好的WebClient实例
-     */
+    private static final Logger log = LoggerFactory.getLogger(WebClientConfig.class);
+
     @Bean
     public WebClient fmpWebClient(@Value("${fmp.base-url}") String baseUrl, WebClient.Builder builder) {
-        return builder.baseUrl(baseUrl).build();
+        return builder
+                .baseUrl(baseUrl)
+                .filter(logRequest())
+                .filter(logResponse())
+                .build();
+    }
+
+    private ExchangeFilterFunction logRequest() {
+        return ExchangeFilterFunction.ofRequestProcessor(request -> {
+            log.info("FMP Request: {} {} headers={}", request.method(), request.url(), request.headers());
+            return Mono.just(request);
+        });
+    }
+
+    private ExchangeFilterFunction logResponse() {
+        return ExchangeFilterFunction.ofResponseProcessor(response -> {
+            log.info("FMP Response: status={} headers={}", response.statusCode(), response.headers().asHttpHeaders());
+            return Mono.just(response);
+        });
     }
 }

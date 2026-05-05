@@ -17,7 +17,18 @@
       "Bash(git push *)",
       "Bash(npm install *)",
       "Bash(npx tsc *)",
-      "Bash(npx vite *)"
+      "Bash(npx vite *)",
+      "Bash(powershell *)",
+      "WebFetch(domain:site.financialmodelingprep.com)",
+      "mcp__FMP_MCP__chart",
+      "Bash(curl -s \"https://financialmodelingprep.com/stable/historical-price-full/TSLA?from=2026-04-01&to=2026-05-05&apikey=demo\")",
+      "WebSearch",
+      "Bash(curl -s \"http://localhost:8182/api/market-data/kline?symbol=TSLA&market=us&period=daily&startDate=2026-04-01&endDate=2026-05-05\")",
+      "Bash(curl *)",
+      "Bash(Start-Sleep -Seconds 15)",
+      "WebFetch(domain:financialmodelingprep.com)",
+      "Bash(env *)",
+      "Bash(powershell.exe *)"
     ]
   }
 }
