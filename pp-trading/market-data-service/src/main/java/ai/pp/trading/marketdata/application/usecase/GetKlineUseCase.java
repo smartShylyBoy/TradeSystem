@@ -58,11 +58,19 @@ public class GetKlineUseCase {
                 endDate
         );
 
-        // 缓存命中，直接返回
-        if (!cachedKlines.isEmpty()) {
+        // 缓存命中：数据非空且日期范围完全覆盖请求范围
+        if (!cachedKlines.isEmpty()
+                && !cachedKlines.get(0).date().isAfter(startDate)
+                && !cachedKlines.get(cachedKlines.size() - 1).date().isBefore(endDate)) {
             log.info("K线缓存命中: 从数据库读取 symbol={}, market={}, period={}, startDate={}, endDate={}",
                     normalizedSymbol, normalizedMarket, normalizedPeriod, startDate, endDate);
             return toResponses(cachedKlines);
+        }
+
+        if (!cachedKlines.isEmpty()) {
+            log.info("K线缓存不完整: 缓存范围 {} ~ {}, 请求范围 {} ~ {}, 将从FMP API重新获取",
+                    cachedKlines.get(0).date(), cachedKlines.get(cachedKlines.size() - 1).date(),
+                    startDate, endDate);
         }
 
         // 缓存未命中，从FMP API获取
