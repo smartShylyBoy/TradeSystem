@@ -1,6 +1,7 @@
 package ai.pp.trading.web.presentation.exception;
 
 import ai.pp.trading.common.dto.ErrorResponse;
+import ai.pp.trading.web.infrastructure.client.IndicatorClient.IndicatorClientException;
 import ai.pp.trading.web.infrastructure.client.MarketDataClient.MarketDataClientException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class GlobalExceptionHandler {
     /**
      * 下游 market-data-service 调用失败 → 503 Service Unavailable
      */
-    @ExceptionHandler(MarketDataClientException.class)
-    public ResponseEntity<ErrorResponse> handleMarketDataClientException(MarketDataClientException e) {
+    @ExceptionHandler({MarketDataClientException.class, IndicatorClientException.class})
+    public ResponseEntity<ErrorResponse> handleDownstreamClientException(Exception e) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.SERVICE_UNAVAILABLE.value(),
                 e.getMessage(),

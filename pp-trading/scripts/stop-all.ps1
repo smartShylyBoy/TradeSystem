@@ -16,16 +16,16 @@ Write-Host "  Stopping all services..." -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# 1-3. 停止 Java 和 Node 服务
+# 1-4. 停止 Java 和 Node 服务
 $step = 1
 foreach ($svc in $Services | Where-Object { $_.Type -ne "docker" }) {
-    Write-Host "[$step/4] Stopping $($svc.Name)..." -ForegroundColor Yellow
+    Write-Host "[$step/5] Stopping $($svc.Name)..." -ForegroundColor Yellow
     Stop-ServiceByPid -Name $svc.Name -Port $svc.Port
     $step++
 }
 
-# 4. 停止 TimescaleDB
-Write-Host "[4/4] Stopping TimescaleDB..." -ForegroundColor Yellow
+# 5. 停止 TimescaleDB
+Write-Host "[5/5] Stopping TimescaleDB..." -ForegroundColor Yellow
 $running = docker ps --filter "name=trading-timescaledb" --format "{{.Names}}" 2>$null
 if ($running -eq "trading-timescaledb") {
     Write-Host "      Stopping container..." -NoNewline

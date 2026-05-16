@@ -7,6 +7,7 @@ $PidsDir = Join-Path $RuntimeDir "pids"
 $Services = @(
     @{ Name = "TimescaleDB";         Port = 5432; Type = "docker" }
     @{ Name = "market-data-service"; Port = 8182; Type = "java"; Dir = "market-data-service"; Command = "mvn spring-boot:run" }
+    @{ Name = "indicator-service";   Port = 8183; Type = "java"; Dir = "indicator-service";   Command = "mvn spring-boot:run" }
     @{ Name = "web-service";         Port = 8181; Type = "java"; Dir = "web-service";         Command = "mvn spring-boot:run" }
     @{ Name = "web-app";             Port = 3000; Type = "node"; Dir = "web-app";             Command = "npm run dev" }
 )

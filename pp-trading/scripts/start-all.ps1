@@ -18,7 +18,7 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # 1. 启动 TimescaleDB (Docker)
-Write-Host "[1/4] Starting TimescaleDB..." -ForegroundColor Yellow
+Write-Host "[1/5] Starting TimescaleDB..." -ForegroundColor Yellow
 $dbContainer = "trading-timescaledb"
 $running = docker ps --filter "name=$dbContainer" --format "{{.Names}}" 2>$null
 if ($running -eq $dbContainer) {
@@ -54,11 +54,11 @@ for ($i = 0; $i -lt 30; $i++) {
     if ($i -eq 29) { Write-Host ""; Write-Host "[WARN] Database may not be fully ready" -ForegroundColor Yellow }
 }
 
-# 2-4. 启动 Java 和 Node 服务
+# 2-5. 启动 Java 和 Node 服务
 Write-Host ""
 $step = 2
 foreach ($svc in $Services | Where-Object { $_.Type -ne "docker" }) {
-    Write-Host "[$step/4] Starting $($svc.Name) (port $($svc.Port))..." -ForegroundColor Yellow
+    Write-Host "[$step/5] Starting $($svc.Name) (port $($svc.Port))..." -ForegroundColor Yellow
     Start-ServiceProcess -Name $svc.Name -Port $svc.Port -Dir $svc.Dir -Command $svc.Command
     Write-Host ""
     $step++

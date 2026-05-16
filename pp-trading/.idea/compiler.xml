@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="market-data-service" />
         <module name="trading-common" />
+        <module name="indicator-service" />
         <module name="strategy-core" />
         <module name="web-service" />
       </profile>
@@ -15,6 +16,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="indicator-service" options="-parameters" />
       <module name="market-data-service" options="-parameters" />
       <module name="strategy-core" options="-parameters" />
       <module name="trading-common" options="-parameters" />

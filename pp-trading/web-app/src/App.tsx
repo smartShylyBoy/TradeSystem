@@ -1,15 +1,18 @@
 import Navbar from './components/Navbar'
 import KlinePage from './pages/KlinePage'
+import { useI18n } from './i18n/useI18n'
 
 /**
  * 应用根组件。
- * 第1期只包含导航栏和 K 线页面，后续可扩展路由。
+ * 管理 i18n 实例，向下传递翻译函数。
  */
 export default function App() {
+  const { t, lang, toggleLang } = useI18n()
+
   return (
     <>
-      <Navbar />
-      <KlinePage />
+      <Navbar t={t} lang={lang} toggleLang={toggleLang} />
+      <KlinePage t={t} />
     </>
   )
 }

@@ -28,7 +28,9 @@
       "Bash(Start-Sleep -Seconds 15)",
       "WebFetch(domain:financialmodelingprep.com)",
       "Bash(env *)",
-      "Bash(powershell.exe *)"
+      "Bash(powershell.exe *)",
+      "Bash(docker exec *)",
+      "Bash(netstat -ano)"
     ]
   }
 }

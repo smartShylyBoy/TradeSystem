@@ -1,99 +1,158 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { fetchKlines } from '../api'
 import SearchBar from '../components/SearchBar'
 import StockTabs from '../components/StockTabs'
 import KlineChart from '../components/KlineChart'
-import type { Kline, KlineParams, StockTab } from '../types'
+import IndicatorConfig from '../components/IndicatorConfig'
+import type {
+  Kline, KlineParams, IndicatorResponse, StockTab,
+  IndicatorVisibility, ChartLegendState,
+} from '../types'
+import type { TranslationKey } from '../i18n/zh'
+
+/** 组件属性 */
+interface Props {
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string
+}
+
+/** localStorage key：指标子项配置 */
+const CONFIG_KEY = 'pp-indicator-config'
+
+/** 默认指标子项配置：全部开启 */
+const DEFAULT_INDICATOR_VISIBLE: IndicatorVisibility = {
+  ma5: true,
+  ma10: true,
+  ma20: true,
+  ma30: false,
+  ma60: false,
+  boll: true,
+  dif: true,
+  dea: true,
+  macdBar: true,
+  rsi6: true,
+}
+
+/** 默认图例大类开关：全部开启 */
+const DEFAULT_LEGEND_STATE: ChartLegendState = {
+  kline: true,
+  ma: true,
+  boll: true,
+  volume: true,
+  macd: true,
+  rsi: true,
+}
+
+/** 从 localStorage 加载指标配置 */
+function loadIndicatorConfig(): IndicatorVisibility {
+  try {
+    const saved = localStorage.getItem(CONFIG_KEY)
+    if (saved) {
+      return { ...DEFAULT_INDICATOR_VISIBLE, ...JSON.parse(saved) }
+    }
+  } catch {
+    // 忽略解析错误
+  }
+  return DEFAULT_INDICATOR_VISIBLE
+}
 
 /**
  * K 线主页面。
- * 整合搜索栏、股票标签栏、K 线图表，管理全局状态。
- *
- * 状态说明：
- * - tabs: 已查询的股票标签列表
- * - activeKey: 当前选中标签的 key（symbol_market_period）
- * - dataMap: 每只股票对应的 K 线数据缓存（key → Kline[]）
- * - loading: 是否正在请求数据
- * - error: 错误信息
+ * 整合搜索栏、标签栏、工具栏、指标配置面板、K 线图表。
  */
-export default function KlinePage() {
+export default function KlinePage({ t }: Props) {
   const [tabs, setTabs] = useState<StockTab[]>([])
   const [activeKey, setActiveKey] = useState('')
   const [dataMap, setDataMap] = useState<Record<string, Kline[]>>({})
+  const [indicatorMap, setIndicatorMap] = useState<Record<string, IndicatorResponse>>({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  /** 生成标签唯一 key */
+  // 指标子项配置（持久化到 localStorage）
+  const [indicatorVisible, setIndicatorVisible] = useState<IndicatorVisibility>(loadIndicatorConfig)
+
+  // 图例大类开关（会话级，不持久化）
+  const [legendState, setLegendState] = useState<ChartLegendState>(DEFAULT_LEGEND_STATE)
+
+  // 配置面板是否展开
+  const [showConfig, setShowConfig] = useState(false)
+
+  /** 指标配置变化时持久化到 localStorage */
+  useEffect(() => {
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(indicatorVisible))
+  }, [indicatorVisible])
+
   const buildKey = (p: StockTab) => `${p.symbol}_${p.market}_${p.period}`
 
-  /** 查询处理：调用 API → 更新数据 → 更新标签 */
+  /** 查询处理 */
   const handleSearch = async (params: KlineParams) => {
     const key = `${params.symbol}_${params.market}_${params.period}`
     setLoading(true)
     setError('')
     try {
-      const klines = await fetchKlines(params)
-      // 缓存该股票的 K 线数据
-      setDataMap(prev => ({ ...prev, [key]: klines }))
-      // 添加标签（已存在则不重复添加）
+      const resp = await fetchKlines(params)
+      setDataMap(prev => ({ ...prev, [key]: resp.klines }))
+      setIndicatorMap(prev => ({ ...prev, [key]: resp.indicators }))
       setTabs(prev => {
         const exists = prev.some(t => buildKey(t) === key)
         if (exists) return prev
         return [...prev, params]
       })
-      // 自动切换到新查询的标签
       setActiveKey(key)
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : '查询失败'
+      const msg = e instanceof Error ? e.message : t('status.error')
       setError(msg)
     } finally {
       setLoading(false)
     }
   }
 
-  /** 关闭标签：移除标签和对应数据，切换到前一个标签 */
+  /** 关闭标签 */
   const handleTabClose = (key: string) => {
     setTabs(prev => prev.filter(t => buildKey(t) !== key))
-    setDataMap(prev => {
-      const next = { ...prev }
-      delete next[key]
-      return next
-    })
-    // 如果关闭的是当前标签，切换到最后一个剩余标签
+    setDataMap(prev => { const n = { ...prev }; delete n[key]; return n })
+    setIndicatorMap(prev => { const n = { ...prev }; delete n[key]; return n })
     if (key === activeKey) {
       const remaining = tabs.filter(t => buildKey(t) !== key)
       setActiveKey(remaining.length > 0 ? buildKey(remaining[remaining.length - 1]) : '')
     }
   }
 
-  // 当前选中的标签和对应数据
   const currentTab = tabs.find(t => buildKey(t) === activeKey)
   const currentData = dataMap[activeKey] ?? []
+  const currentIndicators = indicatorMap[activeKey] ?? null
 
   return (
     <div className="container-fluid px-3 py-3">
-      {/* 搜索栏 */}
-      <SearchBar onSearch={handleSearch} loading={loading} />
+      <SearchBar onSearch={handleSearch} loading={loading} t={t} />
 
-      {/* 错误提示 */}
       {error && (
-        <div className="alert alert-danger mt-3 py-2" role="alert">
-          {error}
-        </div>
+        <div className="alert alert-danger mt-3 py-2" role="alert">{error}</div>
       )}
 
-      {/* 股票标签栏 */}
       <StockTabs
         tabs={tabs}
         activeKey={activeKey}
         onSelect={setActiveKey}
         onClose={handleTabClose}
+        t={t}
       />
 
-      {/* 数据统计 */}
+      {/* 工具栏 */}
       {currentTab && (
-        <div className="text-muted small mt-2">
-          共 {currentData.length} 条数据
+        <div className="d-flex align-items-center gap-2 mt-2">
+          <span className="text-muted small">
+            {t('toolbar.totalData', { count: currentData.length })}
+          </span>
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-secondary"
+            onClick={() => setShowConfig(!showConfig)}
+          >
+            {t('toolbar.config')}
+          </button>
+          <button type="button" className="btn btn-sm btn-outline-warning" disabled>
+            {t('toolbar.backtest')}
+          </button>
         </div>
       )}
 
@@ -101,21 +160,35 @@ export default function KlinePage() {
       {loading && (
         <div className="text-center py-5">
           <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">{t('status.loading')}</span>
           </div>
         </div>
       )}
 
-      {/* K 线图表 */}
+      {/* 图表区域：配置面板 + K 线图 */}
       {!loading && currentTab && (
-        <KlineChart symbol={currentTab.symbol} klines={currentData} />
+        <div className="chart-area">
+          {showConfig && (
+            <IndicatorConfig
+              visible={indicatorVisible}
+              onChange={setIndicatorVisible}
+              onClose={() => setShowConfig(false)}
+            />
+          )}
+          <KlineChart
+            symbol={currentTab.symbol}
+            klines={currentData}
+            indicators={currentIndicators}
+            indicatorVisible={indicatorVisible}
+            legendState={legendState}
+            onLegendChange={setLegendState}
+          />
+        </div>
       )}
 
-      {/* 空状态提示 */}
+      {/* 空状态 */}
       {!loading && !currentTab && (
-        <div className="text-center text-muted py-5">
-          请输入股票代码开始查询
-        </div>
+        <div className="text-center text-muted py-5">{t('status.empty')}</div>
       )}
     </div>
   )

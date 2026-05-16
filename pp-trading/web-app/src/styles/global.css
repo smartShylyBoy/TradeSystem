@@ -136,11 +136,81 @@ body {
 /* ========== K 线图 ========== */
 .kline-chart {
   width: 100%;
-  height: 600px;
+  height: 800px;
   margin-top: 8px;
   background-color: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 8px;
+}
+
+/* ========== 图表区域（配置面板 + 图表） ========== */
+.chart-area {
+  position: relative;
+}
+
+/* ========== 指标配置面板（左上角浮层） ========== */
+.indicator-config-panel {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 50;
+  width: 200px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  font-size: 0.85rem;
+}
+
+.indicator-config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.indicator-config-section {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.indicator-config-section:last-child {
+  border-bottom: none;
+}
+
+.indicator-config-title {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.indicator-config-item {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.indicator-config-item input[type="checkbox"] {
+  accent-color: var(--blue);
+  margin-right: 6px;
+}
+
+.indicator-config-item:hover {
+  color: #fff;
+}
+
+/* ========== 语言切换按钮 ========== */
+.lang-toggle {
+  font-size: 0.8rem;
+  padding: 2px 10px;
+  border-radius: 4px;
 }
 
 /* ========== Alert ========== */
@@ -170,7 +240,7 @@ body {
 /* ========== 响应式 ========== */
 @media (max-width: 768px) {
   .kline-chart {
-    height: 400px;
+    height: 600px;
   }
 
   .search-bar {
@@ -180,6 +250,6 @@ body {
 
 @media (max-width: 576px) {
   .kline-chart {
-    height: 320px;
+    height: 500px;
   }
 }
