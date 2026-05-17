@@ -14,5 +14,30 @@
     <artifactId>strategy-core</artifactId>
     <packaging>jar</packaging>
     <name>strategy-core</name>
-    <description>Strategy core placeholder module</description>
+    <description>策略核心计算逻辑 - 纯共享库，无IO依赖</description>
+
+    <dependencies>
+        <!-- 依赖 trading-common 获取指标 DTO -->
+        <dependency>
+            <groupId>ai.pp.trading</groupId>
+            <artifactId>trading-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Context 仅用于 @Component 注解 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <!-- 不需要 spring-boot-maven-plugin -->
 </project>

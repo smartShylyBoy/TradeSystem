@@ -110,3 +110,48 @@ export interface ChartLegendState {
   macd: boolean
   rsi: boolean
 }
+
+// ========== 回测相关类型 ==========
+
+/** 策略信息 */
+export interface StrategyInfo {
+  id: string
+  name: string
+  description: string
+}
+
+/** 回测请求参数 */
+export interface BacktestParams {
+  symbol: string
+  market: string
+  period: string
+  startDate: string
+  endDate: string
+  strategyId: string
+}
+
+/** 回测交易明细 */
+export interface BacktestTradeDetail {
+  openIndex: number
+  closeIndex: number
+  openDate: string
+  closeDate: string | null
+  openPrice: number
+  closePrice: number
+  direction: string
+  openReason: string
+  closeReason: string | null
+  closed: boolean
+}
+
+/** 回测响应 */
+export interface BacktestResponse {
+  symbol: string
+  strategyId: string
+  strategyName: string
+  totalTrades: number
+  trades: BacktestTradeDetail[]
+}
+
+/** 当前激活的页面 */
+export type ActivePage = 'kline' | 'backtest'

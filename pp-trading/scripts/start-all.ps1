@@ -18,7 +18,7 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 # 1. 启动 TimescaleDB (Docker)
-Write-Host "[1/5] Starting TimescaleDB..." -ForegroundColor Yellow
+Write-Host "[1/6] Starting TimescaleDB..." -ForegroundColor Yellow
 $dbContainer = "trading-timescaledb"
 $running = docker ps --filter "name=$dbContainer" --format "{{.Names}}" 2>$null
 if ($running -eq $dbContainer) {
@@ -54,11 +54,11 @@ for ($i = 0; $i -lt 30; $i++) {
     if ($i -eq 29) { Write-Host ""; Write-Host "[WARN] Database may not be fully ready" -ForegroundColor Yellow }
 }
 
-# 2-5. 启动 Java 和 Node 服务
+# 2-6. 启动 Java 和 Node 服务
 Write-Host ""
 $step = 2
 foreach ($svc in $Services | Where-Object { $_.Type -ne "docker" }) {
-    Write-Host "[$step/5] Starting $($svc.Name) (port $($svc.Port))..." -ForegroundColor Yellow
+    Write-Host "[$step/6] Starting $($svc.Name) (port $($svc.Port))..." -ForegroundColor Yellow
     Start-ServiceProcess -Name $svc.Name -Port $svc.Port -Dir $svc.Dir -Command $svc.Command
     Write-Host ""
     $step++
@@ -79,9 +79,10 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Show-ServiceStatus -ExpectRunning $true
 Write-Host ""
-Write-Host "  Frontend URL: http://localhost:3000" -ForegroundColor Cyan
-Write-Host "  BFF API:      http://localhost:8181/api/web" -ForegroundColor Cyan
-Write-Host "  Data API:     http://localhost:8182/api/market-data" -ForegroundColor Cyan
+Write-Host "  Frontend URL:  http://localhost:3000" -ForegroundColor Cyan
+Write-Host "  BFF API:       http://localhost:8181/api/web" -ForegroundColor Cyan
+Write-Host "  Data API:      http://localhost:8182/api/market-data" -ForegroundColor Cyan
+Write-Host "  Backtest API:  http://localhost:8185/api/backtest" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  Startup complete!" -ForegroundColor Green

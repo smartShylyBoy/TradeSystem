@@ -24,6 +24,7 @@
         <module>web-service</module>
         <module>market-data-service</module>
         <module>indicator-service</module>
+        <module>backtest-service</module>
     </modules>
 
     <properties>

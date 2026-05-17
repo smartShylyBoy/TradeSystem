@@ -5,6 +5,7 @@ const en: Record<TranslationKey, string> = {
   // Navbar
   'nav.brand': 'pp Trading',
   'nav.kline': 'K-Line Backtest',
+  'nav.backtest': 'Strategy Backtest',
   'nav.strategy': 'Strategy',
   'nav.report': 'Reports',
 
@@ -51,6 +52,43 @@ const en: Record<TranslationKey, string> = {
   // Common
   'common.us': 'US',
   'common.hk': 'HK',
+
+  // Backtest page
+  'backtest.title': 'Strategy Backtest',
+  'backtest.symbol': 'Symbol',
+  'backtest.symbolPlaceholder': 'Enter symbol, e.g. AAPL',
+  'backtest.market': 'Market',
+  'backtest.period': 'Period',
+  'backtest.startDate': 'Start Date',
+  'backtest.endDate': 'End Date',
+  'backtest.strategy': 'Strategy',
+  'backtest.run': 'Run Backtest',
+  'backtest.running': 'Running...',
+
+  // Backtest errors
+  'backtest.error.loadStrategies': 'Failed to load strategies',
+  'backtest.error.noStrategy': 'Please select a strategy',
+  'backtest.error.noSymbol': 'Please enter a symbol',
+  'backtest.error.runFailed': 'Backtest failed, please check parameters',
+
+  // Backtest results
+  'backtest.result.title': '{symbol} - {strategy} Backtest Results',
+  'backtest.result.totalTrades': '{count} trades total',
+  'backtest.result.noTrades': 'No trade signals generated',
+  'backtest.result.direction': 'Direction',
+  'backtest.result.openDate': 'Open Date',
+  'backtest.result.openPrice': 'Open Price',
+  'backtest.result.openReason': 'Open Reason',
+  'backtest.result.closeDate': 'Close Date',
+  'backtest.result.closePrice': 'Close Price',
+  'backtest.result.closeReason': 'Close Reason',
+  'backtest.result.status': 'P&L',
+  'backtest.result.closed': 'Closed',
+  'backtest.result.open': 'Open',
+
+  // Trade direction
+  'backtest.direction.long': 'Long',
+  'backtest.direction.short': 'Short',
 }
 
 export default en
