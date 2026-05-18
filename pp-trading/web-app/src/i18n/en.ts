@@ -5,7 +5,6 @@ const en: Record<TranslationKey, string> = {
   // Navbar
   'nav.brand': 'pp Trading',
   'nav.kline': 'K-Line Backtest',
-  'nav.backtest': 'Strategy Backtest',
   'nav.strategy': 'Strategy',
   'nav.report': 'Reports',
 
@@ -26,6 +25,9 @@ const en: Record<TranslationKey, string> = {
   // Chart toolbar
   'toolbar.totalData': '{count} records',
   'toolbar.config': 'Indicator Config',
+  'toolbar.strategyConfig': 'Strategy Config',
+  'toolbar.runBacktest': 'Run Backtest',
+  'toolbar.clear': 'Clear',
   'toolbar.backtest': 'Backtest',
 
   // Chart legend

@@ -9,6 +9,7 @@
         <module name="market-data-service" />
         <module name="trading-common" />
         <module name="indicator-service" />
+        <module name="backtest-service" />
         <module name="strategy-core" />
         <module name="web-service" />
       </profile>
@@ -16,6 +17,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="backtest-service" options="-parameters" />
       <module name="indicator-service" options="-parameters" />
       <module name="market-data-service" options="-parameters" />
       <module name="strategy-core" options="-parameters" />

@@ -13,11 +13,13 @@ import reactor.core.publisher.Mono;
 public class WebClientConfig {
 
     private static final Logger log = LoggerFactory.getLogger(WebClientConfig.class);
+    private static final int MAX_IN_MEMORY_SIZE = 16 * 1024 * 1024;
 
     @Bean
     public WebClient fmpWebClient(@Value("${fmp.base-url}") String baseUrl, WebClient.Builder builder) {
         return builder
                 .baseUrl(baseUrl)
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE))
                 .filter(logRequest())
                 .filter(logResponse())
                 .build();

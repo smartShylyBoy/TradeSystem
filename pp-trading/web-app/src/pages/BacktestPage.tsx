@@ -8,6 +8,23 @@ import type {
 } from '../types'
 import { fetchStrategies, runBacktest } from '../api'
 
+function formatDate(date: Date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function getDefaultStartDate() {
+  const date = new Date()
+  date.setFullYear(date.getFullYear() - 10)
+  return formatDate(date)
+}
+
+function getDefaultEndDate() {
+  return formatDate(new Date())
+}
+
 /** 组件属性 */
 interface Props {
   t: (key: TranslationKey, params?: Record<string, string | number>) => string
@@ -29,8 +46,8 @@ export default function BacktestPage({ t }: Props) {
   const [symbol, setSymbol] = useState<string>('AAPL')
   const [market, setMarket] = useState<string>('us')
   const [period, setPeriod] = useState<string>('daily')
-  const [startDate, setStartDate] = useState<string>('2024-01-01')
-  const [endDate, setEndDate] = useState<string>('2024-12-31')
+  const [startDate, setStartDate] = useState<string>(getDefaultStartDate())
+  const [endDate, setEndDate] = useState<string>(getDefaultEndDate())
   const [strategyId, setStrategyId] = useState<string>('')
 
   /** 回测执行状态 */
@@ -333,12 +350,12 @@ function TradeRow({ index, trade, t }: TradeRowProps) {
       <td>{trade.openDate}</td>
       <td>{trade.openPrice.toFixed(2)}</td>
       <td>
-        <small className="text-muted">{trade.openReason}</small>
+        <small className="backtest-reason-text">{trade.openReason}</small>
       </td>
       <td>{trade.closed ? trade.closeDate : '-'}</td>
       <td>{trade.closed ? trade.closePrice.toFixed(2) : '-'}</td>
       <td>
-        <small className="text-muted">{trade.closed ? trade.closeReason : '-'}</small>
+        <small className="backtest-reason-text">{trade.closed ? trade.closeReason : '-'}</small>
       </td>
       <td>
         {trade.closed ? (

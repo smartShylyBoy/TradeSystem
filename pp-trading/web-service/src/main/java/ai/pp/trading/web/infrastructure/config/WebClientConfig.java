@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 public class WebClientConfig {
 
     private static final Logger log = LoggerFactory.getLogger(WebClientConfig.class);
+    private static final int MAX_IN_MEMORY_SIZE = 16 * 1024 * 1024;
 
     @Value("${service.market-data.url}")
     private String marketDataServiceUrl;
@@ -41,6 +42,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient() {
         return WebClient.builder()
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE))
                 .filter(logRequest())
                 .filter(logResponse())
                 .build();
@@ -50,6 +52,7 @@ public class WebClientConfig {
     public WebClient marketDataWebClient() {
         return WebClient.builder()
                 .baseUrl(marketDataServiceUrl)
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE))
                 .filter(logRequest())
                 .filter(logResponse())
                 .build();

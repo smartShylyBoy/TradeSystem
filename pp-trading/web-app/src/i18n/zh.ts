@@ -3,7 +3,6 @@ const zh = {
   // 导航栏
   'nav.brand': 'pp Trading',
   'nav.kline': 'K线回测',
-  'nav.backtest': '策略回测',
   'nav.strategy': '策略管理',
   'nav.report': '回测报告',
 
@@ -24,6 +23,9 @@ const zh = {
   // 图表工具栏
   'toolbar.totalData': '共 {count} 条数据',
   'toolbar.config': '指标配置',
+  'toolbar.strategyConfig': '策略配置',
+  'toolbar.runBacktest': '运行回测',
+  'toolbar.clear': '清除',
   'toolbar.backtest': '回测',
 
   // 图表图例

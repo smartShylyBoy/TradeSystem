@@ -73,7 +73,12 @@ public class RunBacktestUseCase {
         }
 
         // 3. 计算技术指标
-        IndicatorResponse indicatorResponse = indicatorPort.calculateIndicators(klineResponses);
+        IndicatorResponse indicatorResponse = indicatorPort.calculateIndicators(
+            klineResponses,
+            request.getSymbol(),
+            request.getMarket(),
+            request.getPeriod()
+        );
 
         // 4. 转换为领域模型
         List<KlineData> klines = DataConverter.toKlineDataList(klineResponses);

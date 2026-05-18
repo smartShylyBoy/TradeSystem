@@ -17,5 +17,5 @@ public interface IndicatorPort {
      * @param klines K线数据列表
      * @return 指标计算结果
      */
-    IndicatorResponse calculateIndicators(List<KlineResponse> klines);
+    IndicatorResponse calculateIndicators(List<KlineResponse> klines, String symbol, String market, String period);
 }

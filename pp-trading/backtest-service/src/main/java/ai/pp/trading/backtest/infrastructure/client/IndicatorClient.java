@@ -2,6 +2,7 @@ package ai.pp.trading.backtest.infrastructure.client;
 
 import ai.pp.trading.backtest.domain.port.IndicatorPort;
 import ai.pp.trading.common.dto.KlineResponse;
+import ai.pp.trading.common.dto.indicator.IndicatorRequest;
 import ai.pp.trading.common.dto.indicator.IndicatorResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,10 +23,12 @@ public class IndicatorClient implements IndicatorPort {
     }
 
     @Override
-    public IndicatorResponse calculateIndicators(List<KlineResponse> klines) {
+    public IndicatorResponse calculateIndicators(List<KlineResponse> klines, String symbol, String market, String period) {
+        IndicatorRequest request = new IndicatorRequest(klines, symbol, market, period);
+
         return indicatorWebClient.post()
-            .uri("/api/indicator/calculate")
-            .bodyValue(klines)
+            .uri("/api/indicators/calculate")
+            .bodyValue(request)
             .retrieve()
             .bodyToMono(IndicatorResponse.class)
             .block();
